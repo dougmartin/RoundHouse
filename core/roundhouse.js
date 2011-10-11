@@ -1,15 +1,63 @@
 window.RoundHouse = (function () {
 
 	function App(options, apiFn) {
-		var self, views, settings, api;
+		var params = ko.observable({}),
+			self, views, settings, api;
+		
+		function parseParams() {
+			var parsedParams = {};
+			
+			jQuery.each(location.hash.substr(1).split("|"), function (i, pair) {
+				var nameValue = pair.split(":"),
+					name, value;
+					
+				if (nameValue.length >= 2) {
+					name = nameValue.shift();
+					value = nameValue.join(":");
+					parsedParams[name] = value;
+				}
+			});
+			
+			return parsedParams;
+		}
+		
+		function setParams(newParams) {
+			var newHash = [];
+				
+			jQuery.each(newParams, function (name, value) {
+				newHash.push(name + ":" + value);
+			});
+			
+			window.location.hash = newHash.join("|");
+		}
 		
 		function addParam(name, value) {
+			var parsedParams = parseParams();
+			parsedParams[name] = value;
+			setParams(parsedParams);		
 		}
 		
 		function removeParam(name) {
+			var parsedParams = parseParams();
+			delete parsedParams[name];
+			setParams(parsedParams);		
 		}
 		
 		function removeParams(names) {
+			setParams({});
+		}
+		
+		function run() {
+			var $window = $(window);
+			
+			if (!$window.hashchange) {
+				throw "Aborting!  RoundHouse depends on jquery.ba-hashchange to run (http://benalman.com/projects/jquery-hashchange-plugin/)"
+			}
+			
+			$window.hashchange(function () {
+				params(parseParams());
+			});
+			$window.hashchange();		
 		}
 		
 		function init(options) {
@@ -35,6 +83,9 @@ window.RoundHouse = (function () {
 			self = {
 				settings: settings,
 				views: views,
+				params: params,
+				run: run,
+				setParams: setParams,
 				addParam: addParam,
 				removeParam: removeParam,
 				removeParams: removeParams
