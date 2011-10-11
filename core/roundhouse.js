@@ -101,11 +101,54 @@ window.RoundHouse = (function () {
 			
 			// bind each view
 			jQuery.each(settings.views, function (i, viewData) {
+				var $el;
+				
 				// a view may not be bound to the DOM
 				if (viewData.id) {
-					$("#" + viewData.id).each(function (i, el) {
+					$el = $("#" + viewData.id);
+					
+					$el.each(function (i, el) {
 						ko.applyBindings(viewData.view, el);
 					});
+					
+					if (viewData.view.settings.visibleWithParams) {
+						params.subscribe(function (currentParams) {
+						
+							function checkParam(name, value) {
+								// null means the param doesn't exist
+								if (value === null) {
+									return !currentParams.hasOwnProperty(name);
+								}
+								
+								return currentParams[name] === value;
+							}
+						
+							var paramsMatch = true;
+							jQuery.each(viewData.view.settings.visibleWithParams, function (name, value) {
+								if (jQuery.isArray(value)) {
+									jQuery.each(value, function (i, arrayValue) {
+										paramsMatch = checkParam(name, arrayValue);
+										
+										// return on the first true match
+										return !paramsMatch;
+									});
+								}
+								else {
+									paramsMatch = checkParam(name, value);
+								}
+								
+								// return on the first false match
+								return paramsMatch;
+							});
+							
+							if (paramsMatch) {
+								$el.show();
+							}
+							else {
+								$el.hide();
+							}
+						});
+					}
 				}
 			});
 			
