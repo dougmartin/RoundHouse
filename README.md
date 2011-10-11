@@ -12,8 +12,8 @@ In the course of building a fairly complex application with knockout.js ([Folder
 
 ## External Dependencies ##
 
-knockout.js 1.3 beta
-jQuery 1.6.3
-jQuery templates
-ba-hashchange
+- knockout.js 1.3 beta
+- jQuery 1.6.3
+- jQuery templates
+- ba-hashchange
 

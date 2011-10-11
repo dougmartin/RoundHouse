@@ -11,22 +11,116 @@
 		
 		<script type="text/javascript">
 			$(function () {
-				var searchView = RoundHouse.view({
-				});
-			
-				var app = RoundHouse.app({
+				var app = RoundHouse.App({
 					views: {
-						"#search": searchView,
-						"#list": listView,
-						"#thumbs": thumbView
+						searchView: {
+							id: "search",
+							view: RoundHouse.View({
+								}, 
+								function (app, view) {
+									var results = ko.observableArray(),
+										$query = $(".query", view.root);
+								
+									function search() {
+										var text = jQuery.trim($query.val());
+										if (text.length > 0) {
+											app.addParam("search", text);
+											$.getJSON("http://api.flickr.com/services/feeds/photos_public.gne?tags=" + text + "&tagmode=any&format=json&jsoncallback=?", function(data) {
+												results(data.items);
+											});
+										}
+										return false;
+									}
+									
+									function clear() {
+										$query.val("");
+										results([]);
+										app.removeParams();
+									}
+									
+									function showThumbs() {
+										app.addParam("show", "thumbs");
+									}
+									
+									function showList() {
+										app.addParam("show", "list");
+									}
+									
+									function focus() {
+										$query.focus();
+									}
+								
+									return {
+										results: results,
+										search: search,
+										clear: clear,
+										showThumbs: showThumbs,
+										showList: showList,
+										focus: focus
+									}
+								}
+							)
+						},
+						
+						listView: {
+							id: "list",
+							view: RoundHouse.View({
+								visibleWithParams: {
+									"show": "list"
+								}
+							})
+						},
+						
+						thumbView: {
+							id: "thumbs",
+							view: RoundHouse.View({
+								visibleWithParams: {
+									"show": "thumbs"
+								}
+							})
+						}
 					}
 				});
+				
+				app.views.searchView.api.focus();
 			});
 		</script>
 	</head>
 	<body>
+		<h1>Flickr Image Search</h1>
 		
-	
+		<div id="search">
+			<form data-bind="submit: api.search">
+				<input type="text" class="query" />
+				<input type="button" value="Search" data-bind="click: api.search" />
+				<input type="button" value="Clear" data-bind="click: api.clear" />
+			</form>
+			
+			<div data-bind="visible: api.results().length > 0">
+				<a href="#" data-bind="click: api.showThumbs">Thumbs</a> | <a href="#" data-bind="click: api.showList">List</a> 
+			</div>
+		</div>
+		
+		<div id="list">
+			<table>
+				<thead>
+				</thead>
+				<tbody data-bind="foreach: views.searchView.api.results">
+					<tr>
+						<td><img data-bind="attr: {src: media.m}" /></td>
+						<td><a data-bind="attr: {href: link}, text: title"></td>
+						<td data-bind="text: author"></td>
+						<td data-bind="text: tags"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<div id="thumbs" data-bind="foreach: views.searchView.api.results">
+			<div class="thumb">
+				<a data-bind="attr: {href: link, title: title}"><img data-bind="attr: {src: media.m}" /></a>
+			</div>
+		</div>
 	</body>
 </html>
  
