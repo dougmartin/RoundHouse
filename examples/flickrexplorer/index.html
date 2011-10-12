@@ -36,9 +36,6 @@
 									}
 									
 									function clear() {
-										$query.val("");
-										results([]);
-										noResults(false);
 										app.removeParams();
 										focus();
 									}
@@ -60,7 +57,7 @@
 									}
 								
 									app.watchParam("search", function (search) {
-										search = jQuery.trim(search);
+										search = jQuery.trim(search || "");
 									
 										// set the input box as this function may be called on page load
 										$query.val(search);
@@ -70,6 +67,10 @@
 												results(data.items);
 												noResults(data.items.length == 0);
 											});
+										}
+										else {
+											results([]);
+											noResults(false);
 										}
 									})
 								
