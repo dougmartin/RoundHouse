@@ -89,8 +89,7 @@
 						
 						listView: {
 							id: "list",
-							view: RoundHouse.View({
-								}, 	
+							view: RoundHouse.View( 	
 								function (app, view) {
 									var $viewContext = $(view.context);
 								
@@ -110,15 +109,13 @@
 											$(element).html(linkedTags.join(" "));
 										}
 									}
-								
 								}
 							)
 						},
 						
 						thumbView: {
 							id: "thumbs",
-							view: RoundHouse.View({
-								},
+							view: RoundHouse.View(
 								function (app, view) {
 									var $viewContext = $(view.context);
 								

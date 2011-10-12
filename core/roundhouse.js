@@ -153,6 +153,12 @@ window.RoundHouse = (function () {
 			return self;
 		}
 		
+		// the options are optional...
+		if (jQuery.isFunction(options)) {
+			apiFn = options;
+			options = {};
+		}
+		
 		return init(options);
 	}
 
@@ -177,6 +183,12 @@ window.RoundHouse = (function () {
 			};
 			
 			return self;
+		}
+		
+		// the options are optional...
+		if (jQuery.isFunction(options)) {
+			apiFn = options;
+			options = {};
 		}
 		
 		return init(options);
