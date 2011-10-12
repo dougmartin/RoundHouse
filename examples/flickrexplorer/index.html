@@ -90,7 +90,7 @@
 							id: "list",
 							view: RoundHouse.View({
 									visibleWithParams: {
-										"show": [null, "list"]
+										"show": [null, "list"]	// null means show is not in the app params
 									},
 								}, 	
 								function (app, view) {
@@ -101,7 +101,7 @@
 												$element = $(element);
 												
 											jQuery.each(ko.utils.unwrapObservable(valueAccessor()).split(" "), function (i, tag) {
-												linkedTags.push("<a href='#search:" + tag + "'>" + tag + "</a>");
+												linkedTags.push("<a href='#" + app.buildParamString({"search": tag}) + "'>" + tag + "</a>");
 											});
 											
 											$(element).html(linkedTags.join(" "));
@@ -137,6 +137,7 @@
 			
 			h1 {
 				color: #0063DC;
+				font-size: 24px;
 			}
 			
 			a {

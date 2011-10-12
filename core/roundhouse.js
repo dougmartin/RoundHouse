@@ -13,13 +13,13 @@ window.RoundHouse = (function () {
 		function parseParams() {
 			var parsedParams = {};
 			
-			jQuery.each(location.hash.substr(1).split("|"), function (i, pair) {
-				var nameValue = pair.split(":"),
+			jQuery.each(location.hash.substr(1).split(settings.paramSeparators.pairs), function (i, pair) {
+				var nameValue = pair.split(settings.paramSeparators.nameValue),
 					name, value;
 					
 				if (nameValue.length >= 2) {
 					name = nameValue.shift();
-					value = nameValue.join(":");
+					value = nameValue.join(settings.paramSeparators.nameValue);
 					parsedParams[name] = value;
 				}
 			});
@@ -27,14 +27,18 @@ window.RoundHouse = (function () {
 			return parsedParams;
 		}
 		
-		function setParams(newParams) {
+		function buildParamString(newParams) {
 			var newHash = [];
 				
 			jQuery.each(newParams, function (name, value) {
-				newHash.push(name + ":" + value);
+				newHash.push(name + settings.paramSeparators.nameValue + value);
 			});
 			
-			window.location.hash = newHash.join("|");
+			return newHash.join(settings.paramSeparators.pairs);
+		}
+		
+		function setParams(newParams) {
+			window.location.hash = buildParamString(newParams);
 		}
 		
 		function addParam(name, value) {
@@ -82,6 +86,11 @@ window.RoundHouse = (function () {
 				views: [],
 				api: {}
 			}, options);
+			settings.paramSeparators = jQuery.extend({ 
+				pairs: "&",
+				nameValue: "="
+			}, settings.paramSeparators);
+			
 		
 			// create the views shortcut
 			views = {};
@@ -104,7 +113,8 @@ window.RoundHouse = (function () {
 				setParams: setParams,
 				addParam: addParam,
 				removeParam: removeParam,
-				removeParams: removeParams
+				removeParams: removeParams,
+				buildParamString: buildParamString
 			};
 			
 			// create the api using the initial interface
