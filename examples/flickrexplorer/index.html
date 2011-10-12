@@ -31,7 +31,7 @@
 											app.addParam("search", text);
 										}
 										
-										setTimeout(focus, 125);
+										focus();
 										
 										return false;
 									}
@@ -62,7 +62,10 @@
 									app.params.subscribe(function (params) {
 										if (params.search && (params.search != lastSearch)) {
 											lastSearch = params.search;
+											
+											// set the input box as this function may be called on page load
 											$query.val(params.search);
+											
 											$.getJSON("http://api.flickr.com/services/feeds/photos_public.gne?tags=" + params.search + "&tagmode=any&format=json&jsoncallback=?", function(data) {
 												results(data.items);
 												noResults(data.items.length == 0);
