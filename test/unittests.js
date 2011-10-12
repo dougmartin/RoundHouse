@@ -15,7 +15,9 @@ module("Single view app", {
 		view1 = RoundHouse.View();
 		app = RoundHouse.App({
 			views: {
-				"#view1": view1
+				view1: {
+					view: view1
+				}
 			}
 		});
 	}
@@ -23,7 +25,7 @@ module("Single view app", {
 
 test("check single view app", function() {
 	ok(!jQuery.isEmptyObject(app.settings.views));
-	ok(app.views["#view1"] === view1);
+	ok(app.views.view1 === view1);
 });
 
 module("Two view app", {
@@ -32,8 +34,12 @@ module("Two view app", {
 		view2 = RoundHouse.View();
 		app = RoundHouse.App({
 			views: {
-				"#view1": view1,
-				"#view2": view2
+				view1: {
+					view: view1
+				},
+				view2: {
+					view: view2
+				}
 			}
 		});
 	}
@@ -41,6 +47,6 @@ module("Two view app", {
 
 test("check two view app", function() {
 	ok(!jQuery.isEmptyObject(app.settings.views));
-	ok(app.views["#view1"] === view1);
-	ok(app.views["#view2"] === view2);
+	ok(app.views.view1 === view1);
+	ok(app.views.view2 === view2);
 });
