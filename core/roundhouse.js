@@ -135,12 +135,13 @@ window.RoundHouse = (function () {
 			// run the api init function across all the views
 			jQuery.each(views, function (name, view) {
 				view.api = view.apiFn ? view.apiFn(self, view) : view.api;
+				view.app = self;
 			});			
 			
 			// bind each view after they all have been inited so they can reference each other's api
 			jQuery.each(views, function (name, view) {
 				 
-				// a view may not be bound to the DOM
+				// only bind views that exist in the DOM
 				if (view.context) {
 				
 					view.context.each(function (i, el) {
@@ -179,7 +180,8 @@ window.RoundHouse = (function () {
 				context: null,
 				settings: settings,
 				apiFn: apiFn,
-				api: settings.api
+				api: settings.api,
+				app: null
 			};
 			
 			return self;

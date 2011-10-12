@@ -15,8 +15,8 @@
 					views: {
 						searchView: {
 							id: "search",
-							view: RoundHouse.View({
-								}, 
+							bindingPrefix: "search",
+							view: RoundHouse.View(
 								function (app, view) {
 									var results = ko.observableArray(),
 										noResults = ko.observable(false),
