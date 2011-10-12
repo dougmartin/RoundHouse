@@ -50,7 +50,16 @@ window.RoundHouse = (function () {
 		}
 		
 		function removeParams(names) {
-			setParams({});
+			if (!names) {
+				setParams({});
+			}
+			else {
+				var parsedParams = parseParams();
+				jQuery.each(names, function (i, name) {
+					delete parsedParams[name];
+				});
+				setParams(parsedParams);		
+			}
 		}
 		
 		function run() {
