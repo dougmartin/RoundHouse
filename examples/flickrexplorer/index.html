@@ -90,11 +90,13 @@
 						listView: {
 							id: "list",
 							view: RoundHouse.View({
-									visibleWithParams: {
-										"show": [null, "list"]	// null means show is not in the app params
-									},
 								}, 	
 								function (app, view) {
+									var $viewContext = $(view.context);
+								
+									app.watchParam("show", function (show) {
+										$viewContext.toggle(!show || (show === "list"));
+									});
 								
 									ko.bindingHandlers.listViewLinkedTags = {
 										update: function (element, valueAccessor, allBindingsAccessor, viewModel) {
@@ -116,10 +118,16 @@
 						thumbView: {
 							id: "thumbs",
 							view: RoundHouse.View({
-								visibleWithParams: {
-									"show": "thumbs"
+								},
+								function (app, view) {
+									var $viewContext = $(view.context);
+								
+									$viewContext.hide();
+									app.watchParam("show", function (show) {
+										$viewContext.toggle(show === "thumbs");
+									});
 								}
-							})
+							)	
 						}
 					}
 				});
