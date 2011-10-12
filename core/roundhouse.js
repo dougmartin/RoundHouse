@@ -1,3 +1,9 @@
+//
+// RoundHouse v0.1
+// (c) Doug Martin - https://github.com/dougmartin/RoundHouse
+// License: MIT (http://www.opensource.org/licenses/mit-license.php)
+//
+
 window.RoundHouse = (function () {
 
 	function App(options, apiFn) {
@@ -75,7 +81,7 @@ window.RoundHouse = (function () {
 				views[name].context = viewData.id ? $("#" + viewData.id) : null;
 			});
 			
-			// set each view to have a reference
+			// set each view to have a reference to all the views
 			jQuery.each(views, function (name, view) {
 				view.views = views;
 			});
@@ -100,7 +106,7 @@ window.RoundHouse = (function () {
 				view.api = view.apiFn ? view.apiFn(self, view) : view.api;
 			});			
 			
-			// bind each view after they have been inited
+			// bind each view after they all have been inited so they can reference each other's api
 			jQuery.each(views, function (name, view) {
 				 
 				// a view may not be bound to the DOM
