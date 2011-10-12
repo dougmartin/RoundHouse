@@ -20,7 +20,7 @@
 								function (app, view) {
 									var results = ko.observableArray(),
 										noResults = ko.observable(false),
-										$query = $(".query", view.root),
+										$query = $(".query", view.context),
 										lastSearch;
 										
 									function search() {

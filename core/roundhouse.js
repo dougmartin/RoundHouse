@@ -72,6 +72,7 @@ window.RoundHouse = (function () {
 			views = {};
 			jQuery.each(settings.views, function (name, viewData) {
 				views[name] = viewData.view;
+				views[name].context = viewData.id ? $("#" + viewData.id) : null;
 			});
 			
 			// set each view to have a reference
@@ -94,24 +95,22 @@ window.RoundHouse = (function () {
 			// create the api using the initial interface
 			self.api = apiFn ? apiFn(self) : settings.api;
 			
-			// set each view to have a reference to the api
+			// run the api init function across all the views
 			jQuery.each(views, function (name, view) {
 				view.api = view.apiFn ? view.apiFn(self, view) : view.api;
 			});			
 			
-			// bind each view
-			jQuery.each(settings.views, function (i, viewData) {
-				var $el;
-				
+			// bind each view after they have been inited
+			jQuery.each(views, function (name, view) {
+				 
 				// a view may not be bound to the DOM
-				if (viewData.id) {
-					$el = $("#" + viewData.id);
-					
-					$el.each(function (i, el) {
-						ko.applyBindings(viewData.view, el);
+				if (view.context && (view.context.length > 0)) {
+				
+					view.context.each(function (i, el) {
+						ko.applyBindings(view, el);
 					});
 					
-					if (viewData.view.settings.visibleWithParams) {
+					if (view.settings.visibleWithParams) {
 						params.subscribe(function (currentParams) {
 						
 							function checkParam(name, value) {
@@ -124,7 +123,7 @@ window.RoundHouse = (function () {
 							}
 						
 							var paramsMatch = true;
-							jQuery.each(viewData.view.settings.visibleWithParams, function (name, value) {
+							jQuery.each(view.settings.visibleWithParams, function (name, value) {
 								if (jQuery.isArray(value)) {
 									jQuery.each(value, function (i, arrayValue) {
 										paramsMatch = checkParam(name, arrayValue);
@@ -142,10 +141,10 @@ window.RoundHouse = (function () {
 							});
 							
 							if (paramsMatch) {
-								$el.show();
+								view.context.show();
 							}
 							else {
-								$el.hide();
+								view.context.hide();
 							}
 						});
 					}
@@ -173,6 +172,7 @@ window.RoundHouse = (function () {
 			// create the interface.
 			// the app will call apiFn after it initializes
 			self = {
+				context: null,
 				settings: settings,
 				apiFn: apiFn,
 				api: settings.api
