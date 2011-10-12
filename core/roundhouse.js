@@ -66,6 +66,17 @@ window.RoundHouse = (function () {
 			}
 		}
 		
+		function watchParam(name, callback) {
+			var lastValue = undefined;
+			
+			return params.subscribe(function (newParams) {
+				if (newParams[name] !== lastValue) {
+					lastValue = newParams[name];
+					callback(newParams[name], newParams);
+				}
+			});
+		}
+		
 		function run() {
 			var $window = $(window);
 			
@@ -114,7 +125,8 @@ window.RoundHouse = (function () {
 				addParam: addParam,
 				removeParam: removeParam,
 				removeParams: removeParams,
-				buildParamString: buildParamString
+				buildParamString: buildParamString,
+				watchParam: watchParam
 			};
 			
 			// create the api using the initial interface
