@@ -14,8 +14,7 @@
 				var app = RoundHouse.App({
 					views: {
 						searchView: {
-							id: "search",
-							bindingPrefix: "search",
+							selector: "#search",
 							view: RoundHouse.View(
 								function (app, view) {
 									var results = ko.observableArray(),
@@ -88,7 +87,7 @@
 						},
 						
 						listView: {
-							id: "list",
+							selector: "#list",
 							view: RoundHouse.View( 	
 								function (app, view) {
 									app.watchParam("show", function (show) {
@@ -112,7 +111,7 @@
 						},
 						
 						thumbView: {
-							id: "thumbs",
+							selector: "#thumbs",
 							view: RoundHouse.View(
 								function (app, view) {
 									view.hide();

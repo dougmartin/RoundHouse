@@ -107,11 +107,11 @@ window.RoundHouse = (function () {
 			jQuery.each(settings.views, function (name, viewData) {
 				if (typeof viewData === "string") {
 					views[name] = View();
-					views[name].context = $("#" + viewData);
+					views[name].context = $(viewData);
 				}
 				else {
 					views[name] = viewData.view || View();
-					views[name].context = viewData.id ? $("#" + viewData.id) : null;
+					views[name].context = viewData.selector ? $(viewData.selector) : null;
 				}
 			});
 			
