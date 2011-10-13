@@ -113,6 +113,8 @@ window.RoundHouse = (function () {
 					views[name] = viewData.view || View();
 					views[name].context = viewData.selector ? $(viewData.selector) : null;
 				}
+				
+				views[name].visible(views[name].context ? views[name].context.is(":visible") : null);
 			});
 			
 			// set each view to have a reference to all the views
@@ -160,29 +162,11 @@ window.RoundHouse = (function () {
 	}
 
 	function View(options, apiFn) {
-		var self, settings, api;
-		
-		function show() {
-			if (self.context) {
-				self.context.show();
-			}
-		}
-		
-		function hide() {
-			if (self.context) {
-				self.context.hide();
-			}
-		}
-		
-		function toggle() {
-			if (self.context) {
-				self.context.toggle.apply(self.context, arguments);
-			}
-		}
+		var self, settings, api, visible;
 		
 		function visibleIfParamEquals(param, value) {
 			self.app.watchParam(param, function (paramValue) {
-				toggle(paramValue === value);
+				self.visible(paramValue === value);
 			});
 		}
 		
@@ -203,11 +187,16 @@ window.RoundHouse = (function () {
 				api: settings.api,
 				app: null,
 				
-				show: show,
-				hide: hide,
-				toggle: toggle,
+				visible: ko.observable(),
+				
 				visibleIfParamEquals: visibleIfParamEquals
 			};
+			
+			self.visible.subscribe(function (isVisible) {
+				if (self.context) {
+					self.context.toggle(isVisible);
+				}
+			});
 			
 			return self;
 		}

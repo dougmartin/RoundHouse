@@ -91,7 +91,7 @@
 							view: RoundHouse.View( 	
 								function (app, view) {
 									app.watchParam("show", function (show) {
-										view.toggle(!show || (show === "list"));
+										view.visible(!show || (show === "list"));
 									});
 								
 									ko.bindingHandlers.listViewLinkedTags = {
