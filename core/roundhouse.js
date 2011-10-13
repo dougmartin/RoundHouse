@@ -84,6 +84,8 @@ window.RoundHouse = (function () {
 				throw "Aborting!  RoundHouse depends on jquery.ba-hashchange to run (http://benalman.com/projects/jquery-hashchange-plugin/)"
 			}
 			
+			self.started(true);
+			
 			$window.hashchange(function () {
 				params(parseParams());
 			});
@@ -133,7 +135,8 @@ window.RoundHouse = (function () {
 				removeParam: removeParam,
 				removeParams: removeParams,
 				buildParamString: buildParamString,
-				watchParam: watchParam
+				watchParam: watchParam,
+				started: ko.observable(false)
 			};
 			
 			// create the api using the initial interface
@@ -162,7 +165,7 @@ window.RoundHouse = (function () {
 	}
 
 	function View(options, apiFn) {
-		var self, settings, api, visible;
+		var self, settings, api, visible, toggled;
 		
 		function visibleIfParamEquals(param, value) {
 			self.app.watchParam(param, function (paramValue) {
@@ -188,13 +191,31 @@ window.RoundHouse = (function () {
 				app: null,
 				
 				visible: ko.observable(),
+				toggled: ko.observable(),
 				
 				visibleIfParamEquals: visibleIfParamEquals
 			};
 			
 			self.visible.subscribe(function (isVisible) {
+				var isNowVisible;
+				
 				if (self.context) {
+					isNowVisible = self.context.is(":visible");
+					
 					self.context.toggle(isVisible);
+					
+					// provide a observable that updates after the visibility changes so the subscribers can use the DOM
+					if (isNowVisible !== isVisible) {
+						function checkVisibility() {
+							if (isNowVisible !== self.context.is(":visible")) {
+								self.toggled(isVisible);
+							}
+							else {
+								setTimeout(checkVisibility, 10);
+							}
+						}
+						checkVisibility();
+					}
 				}
 			});
 			
