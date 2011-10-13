@@ -67,7 +67,7 @@ window.RoundHouse = (function () {
 		}
 		
 		function watchParam(name, callback) {
-			var lastValue = undefined;
+			var lastValue = null;
 			
 			return params.subscribe(function (newParams) {
 				if (newParams[name] !== lastValue) {
