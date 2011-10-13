@@ -91,10 +91,8 @@
 							id: "list",
 							view: RoundHouse.View( 	
 								function (app, view) {
-									var $viewContext = $(view.context);
-								
 									app.watchParam("show", function (show) {
-										$viewContext.toggle(!show || (show === "list"));
+										view.toggle(!show || (show === "list"));
 									});
 								
 									ko.bindingHandlers.listViewLinkedTags = {
@@ -117,11 +115,9 @@
 							id: "thumbs",
 							view: RoundHouse.View(
 								function (app, view) {
-									var $viewContext = $(view.context);
-								
-									$viewContext.hide();
+									view.hide();
 									app.watchParam("show", function (show) {
-										$viewContext.toggle(show === "thumbs");
+										view.toggle(show === "thumbs");
 									});
 								}
 							)	
@@ -203,17 +199,17 @@
 		<h1><img src="flickr-yahoo-logo.png" /> Explorer</h1>
 		
 		<div id="search">
-			<form data-bind="submit: api.search">
+			<form data-bind="submit: views.searchView.api.search">
 				<input type="text" class="query" />
-				<input type="button" value="Search" data-bind="click: api.search" />
-				<input type="button" value="Clear" data-bind="click: api.clear" />
+				<input type="button" value="Search" data-bind="click: views.searchView.api.search" />
+				<input type="button" value="Clear" data-bind="click: views.searchView.api.clear" />
 			</form>
 			
-			<div class="showBar" data-bind="visible: api.results().length > 0">
-				<a href="#" data-bind="click: api.showList">List</a> | <a href="#" data-bind="click: api.showThumbs">Thumbs</a>
+			<div class="showBar" data-bind="visible: views.searchView.api.results().length > 0">
+				<a href="#" data-bind="click: views.searchView.api.showList">List</a> | <a href="#" data-bind="click: views.searchView.api.showThumbs">Thumbs</a>
 			</div>
 			
-			<div class="noResults" data-bind="visible: api.noResults">
+			<div class="noResults" data-bind="visible: views.searchView.api.noResults">
 				Sorry, no results were found.
 			</div>
 		</div>

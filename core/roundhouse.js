@@ -106,7 +106,7 @@ window.RoundHouse = (function () {
 			// create the views shortcut
 			views = {};
 			jQuery.each(settings.views, function (name, viewData) {
-				views[name] = viewData.view;
+				views[name] = viewData.view || View();
 				views[name].context = viewData.id ? $("#" + viewData.id) : null;
 			});
 			
@@ -138,17 +138,8 @@ window.RoundHouse = (function () {
 				view.app = self;
 			});			
 			
-			// bind each view after they all have been inited so they can reference each other's api
-			jQuery.each(views, function (name, view) {
-				 
-				// only bind views that exist in the DOM
-				if (view.context) {
-				
-					view.context.each(function (i, el) {
-						ko.applyBindings(view, el);
-					});
-				}
-			});
+			// bind the app to the entire DOM
+			ko.applyBindings(self);
 			
 			// return the interface
 			return self;
@@ -160,11 +151,29 @@ window.RoundHouse = (function () {
 			options = {};
 		}
 		
-		return init(options);
+		return init(options || {});
 	}
 
 	function View(options, apiFn) {
 		var self, settings, api;
+		
+		function show() {
+			if (self.context) {
+				self.context.show();
+			}
+		}
+		
+		function hide() {
+			if (self.context) {
+				self.context.hide();
+			}
+		}
+		
+		function toggle() {
+			if (self.context) {
+				self.context.toggle.apply(self.context, arguments);
+			}
+		}
 		
 		function init(options) {
 		
@@ -181,7 +190,11 @@ window.RoundHouse = (function () {
 				settings: settings,
 				apiFn: apiFn,
 				api: settings.api,
-				app: null
+				app: null,
+				
+				show: show,
+				hide: hide,
+				toggle: toggle
 			};
 			
 			return self;
@@ -193,7 +206,7 @@ window.RoundHouse = (function () {
 			options = {};
 		}
 		
-		return init(options);
+		return init(options || {});
 	}
 
 	return {
