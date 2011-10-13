@@ -139,8 +139,8 @@ window.RoundHouse = (function () {
 			
 			// run the api init function across all the views
 			jQuery.each(views, function (name, view) {
-				view.api = view.apiFn ? view.apiFn(self, view) : view.api;
 				view.app = self;
+				view.api = view.apiFn ? view.apiFn(self, view) : view.api;
 			});			
 			
 			// bind the app to the entire DOM
@@ -180,6 +180,12 @@ window.RoundHouse = (function () {
 			}
 		}
 		
+		function visibleIfParamEquals(param, value) {
+			self.app.watchParam(param, function (paramValue) {
+				toggle(paramValue === value);
+			});
+		}
+		
 		function init(options) {
 		
 			// set the default settings
@@ -199,7 +205,8 @@ window.RoundHouse = (function () {
 				
 				show: show,
 				hide: hide,
-				toggle: toggle
+				toggle: toggle,
+				visibleIfParamEquals: visibleIfParamEquals
 			};
 			
 			return self;

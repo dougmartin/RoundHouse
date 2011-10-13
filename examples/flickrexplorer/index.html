@@ -114,9 +114,7 @@
 							selector: "#thumbs",
 							view: RoundHouse.View(
 								function (app, view) {
-									app.watchParam("show", function (show) {
-										view.toggle(show === "thumbs");
-									});
+									view.visibleIfParamEquals("show", "thumbs");
 								}
 							)	
 						}
