@@ -102,12 +102,17 @@ window.RoundHouse = (function () {
 				nameValue: "="
 			}, settings.paramSeparators);
 			
-		
 			// create the views shortcut
 			views = {};
 			jQuery.each(settings.views, function (name, viewData) {
-				views[name] = viewData.view || View();
-				views[name].context = viewData.id ? $("#" + viewData.id) : null;
+				if (typeof viewData === "string") {
+					views[name] = View();
+					views[name].context = $("#" + viewData);
+				}
+				else {
+					views[name] = viewData.view || View();
+					views[name].context = viewData.id ? $("#" + viewData.id) : null;
+				}
 			});
 			
 			// set each view to have a reference to all the views
