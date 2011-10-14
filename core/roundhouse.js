@@ -171,9 +171,14 @@ window.RoundHouse = (function () {
 	function View(options, apiFn) {
 		var self, settings, api;
 		
-		function visibleIfParamEquals(param, value) {
+		function visibleIfParam(param, value) {
 			self.app.watchParam(param, function (paramValue) {
-				self.visible(paramValue === value);
+				if (jQuery.isFunction(value)) {
+					self.visible(value(paramValue));
+				}
+				else {
+					self.visible(paramValue === value);
+				}
 			});
 		}
 		
@@ -198,7 +203,7 @@ window.RoundHouse = (function () {
 				toggled: ko.observable(),
 				firstVisible: ko.observable(),
 				
-				visibleIfParamEquals: visibleIfParamEquals
+				visibleIfParam: visibleIfParam
 			};
 			
 			self.visible.subscribe(function (isVisible) {

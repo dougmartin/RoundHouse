@@ -92,10 +92,11 @@
 								});
 							}
 							
+							// show this view when there is a search parameter
 							view.visible(search.length > 0);
 						})
 						
-						// refocus on the search field on the initial load and when the view type changes
+						// focus on the search field when the view becomes visible
 						view.toggled.subscribe(function (isVisible) {
 							if (isVisible) {
 								focus();
@@ -131,8 +132,8 @@
 							}
 						}
 						
-						app.watchParam("view", function (viewValue) {
-							view.visible(!viewValue || (viewValue === "list"));
+						view.visibleIfParam("view", function (viewValue) {
+							return !viewValue || (viewValue === "list");
 						});
 					
 						function show() {
@@ -147,7 +148,7 @@
 				
 				thumbs = RoundHouse.View(
 					function (app, view) {
-						view.visibleIfParamEquals("view", "thumbs");
+						view.visibleIfParam("view", "thumbs");
 						
 						function show() {
 							app.addParam("view", "thumbs");
