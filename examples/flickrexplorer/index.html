@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en"> 
 	<head>
-		<title>Flickr Search - Example Roundhouse app</title>
+		<title>Flickr Explorer - An example app using the RoundHouse framework</title>
 		<script type="text/javascript" src="../../3rd/jquery-1.6.3.min.js"></script>
 		<script type="text/javascript" src="../../3rd/jquery.tmpl.min.js"></script>
 		<script type="text/javascript" src="../../3rd/knockout-1.3.0beta.js"></script>
@@ -29,10 +29,6 @@
 							return false;
 						}									
 							
-						function focus() {
-							$query.focus();
-						}
-					
 						// show this view where there is no search parameter
 						app.watchParam("search", function (search) {
 							view.visible((search || "").length === 0);
@@ -41,13 +37,12 @@
 						// focus on the search field whenever this view is set to visible
 						view.toggled.subscribe(function (isVisible) {
 							if (isVisible) {
-								focus();
+								$query.focus();
 							}
 						});
 						
 						return {
-							search: search,
-							focus: focus
+							search: search
 						}
 					}
 				);
@@ -73,7 +68,6 @@
 						
 						function clear() {
 							app.removeParams();
-							focus();
 						}
 						
 						function focus() {
@@ -113,8 +107,7 @@
 							noResults: noResults,
 							searching: searching,
 							search: search,
-							clear: clear,
-							focus: focus
+							clear: clear
 						}
 					}
 				);
@@ -123,10 +116,10 @@
 					function (app, view) {
 					
 						// this doesn't scope the binding handler to the view but it does organize the code
-						// to associate the handler to the view.  The link_ prefix is used as a convention
+						// to associate the handler to the view.  The list_ prefix is used as a convention
 						// to know where the handler is defined in the html
 						ko.bindingHandlers.list_linkedTags = {
-							update: function (element, valueAccessor, allBindingsAccessor, viewModel) {
+							update: function (element, valueAccessor) {
 								var linkedTags = [],
 									$element = $(element);
 									
@@ -220,6 +213,12 @@
 				margin-top: 20px;
 			}
 			
+			div#centerSearch .info {
+				margin-top: 20px;
+				font-size: 12px;
+				text-align: center;
+			}
+			
 			div#centerSearch input.query {
 				width: 225px;
 			}
@@ -282,12 +281,16 @@
 	<body>
 		<div id="centerSearch" style="min-height: 500px; position: relative;">
 			<div style="position: absolute; top: 50%; left: 50%; height: 500px; margin-left: -150px;">
-				<span class="logo"><img src="flickr-yahoo-logo.png" /> Explorer</span>
+				<div class="logo"><img src="flickr-yahoo-logo.png" /> Explorer</div>
 
 				<form data-bind="submit: views.centerSearch.api.search">
 					<input type="text" class="query centerQuery" />
 					<input type="button" value="Search" data-bind="click: views.centerSearch.api.search" />
 				</form>
+				
+				<div class="info">
+					(an example app using the <a href="https://github.com/dougmartin/RoundHouse">RoundHouse framework</a>)
+				</div>
 			</div>		
 		</div>
 		
