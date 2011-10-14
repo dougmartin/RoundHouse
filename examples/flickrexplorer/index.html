@@ -20,7 +20,9 @@
 						function search() {
 							var text = jQuery.trim($query.val());
 							if (text.length > 0) {
-								app.views.topSearch.api.search(text);
+								// Just set the search term, the app.watchParam("search") function in topSearch below will do the search.
+								// This allows us to have bookmarkable URLs that perform the search on load
+								app.addParam("search", text);
 								$query.val("");
 							}
 							
@@ -57,12 +59,10 @@
 							searching = ko.observable(false)
 							$query = $(".query", view.context);
 							
-						function search(text) {
-							text = text || jQuery.trim($query.val());
+						function search() {
+							text = jQuery.trim($query.val());
 							
 							if (text.length > 0) {
-								// Just set the search term, the app.watchParam("search") function below will do the search.
-								// This allows us to have bookmarkable URLs that perform the search on load
 								app.addParam("search", text);
 							}
 							
@@ -166,6 +166,7 @@
 					}
 				);
 			
+				// define the app as a composite of views, there is an optional api init function but we don't need it here
 				app = RoundHouse.App({
 					views: {
 						centerSearch: {
