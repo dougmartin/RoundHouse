@@ -77,6 +77,11 @@ window.RoundHouse = (function () {
 			});
 		}
 		
+		function getParam(name, defaultValue) {
+			var parsedParams = parseParams();
+			return parsedParams[name] || defaultValue;
+ 		}
+		
 		function hideAllExcept() {
 			var args = Array.prototype.slice.call(arguments);
 			
@@ -149,6 +154,7 @@ window.RoundHouse = (function () {
 				removeParams: removeParams,
 				buildParamString: buildParamString,
 				watchParam: watchParam,
+				getParam: getParam,
 				hideAllExcept: hideAllExcept,
 				
 				started: ko.observable(false)
