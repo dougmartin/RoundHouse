@@ -154,6 +154,9 @@ window.RoundHouse = (function () {
 				started: ko.observable(false)
 			};
 			
+			// set an app instance to itself for clearer templates
+			self.app = self;
+			
 			// create the api using the initial interface
 			self.api = apiFn ? apiFn(self) : settings.api;
 			
@@ -173,9 +176,6 @@ window.RoundHouse = (function () {
 				// bind the app to the entire DOM
 				ko.applyBindings(self);
 			}
-			
-			// set an app instance to itself for clearer templates
-			self.app = self;
 			
 			// return the interface
 			return self;
