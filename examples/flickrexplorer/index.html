@@ -20,7 +20,7 @@
 						function search() {
 							var text = jQuery.trim($query.val());
 							if (text.length > 0) {
-								app.views.search.api.search(text);
+								app.views.topSearch.api.search(text);
 								$query.val("");
 							}
 							
@@ -50,7 +50,7 @@
 					}
 				);
 				
-				search = RoundHouse.View(
+				topSearch = RoundHouse.View(
 					function (app, view) {
 						var results = ko.observableArray(),
 							noResults = ko.observable(false),
@@ -172,9 +172,9 @@
 							selector: "#centerSearch",
 							view: centerSearch
 						},
-						search: {
-							selector: "#search",
-							view: search
+						topSearch: {
+							selector: "#topSearch",
+							view: topSearch
 						},
 						list: {
 							selector: "#list",
@@ -223,19 +223,19 @@
 				width: 225px;
 			}
 			
-			div#search {
+			div#topSearch {
 				display: none;
 			}
 			
-			div#search input.query {
+			div#topSearch input.query {
 				width: 300px;
 			}
 			
-			div#search input.topQuery {
+			div#topSearch input.topQuery {
 				margin-left: 15px;
 			}
 			
-			div#search div.showBar {
+			div#topSearch div.showBar {
 				margin: 10px 0;
 				padding: 3px 5px;
 				border-top: 2px solid #0063DC;
@@ -243,8 +243,8 @@
 				background-color: #cbe2ff;
 			}
 			
-			div#search div.noResults,
-			div#search div.searching
+			div#topSearch div.noResults,
+			div#topSearch div.searching
 			{
 				margin: 10px 0;
 			}
@@ -290,23 +290,23 @@
 			</div>		
 		</div>
 		
-		<div id="search">
-			<form data-bind="submit: views.search.api.search">
+		<div id="topSearch">
+			<form data-bind="submit: views.topSearch.api.search">
 				<span class="logo"><img src="flickr-yahoo-logo.png" /> Explorer</span>
 				<input type="text" class="query topQuery" />
-				<input type="button" value="Search" data-bind="click: views.search.api.search" />
-				<input type="button" value="Clear" data-bind="click: views.search.api.clear" />
+				<input type="button" value="Search" data-bind="click: views.topSearch.api.search" />
+				<input type="button" value="Clear" data-bind="click: views.topSearch.api.clear" />
 			</form>
 			
-			<div class="searching" data-bind="visible: views.search.api.searching">
+			<div class="searching" data-bind="visible: views.topSearch.api.searching">
 				Searching ...
 			</div>
 			
-			<div class="showBar" data-bind="visible: views.search.api.results().length > 0">
+			<div class="showBar" data-bind="visible: views.topSearch.api.results().length > 0">
 				<a href="#" data-bind="click: views.list.api.show">List</a> | <a href="#" data-bind="click: views.thumbs.api.show">Thumbs</a>
 			</div>
 			
-			<div class="noResults" data-bind="visible: views.search.api.noResults">
+			<div class="noResults" data-bind="visible: views.topSearch.api.noResults">
 				Sorry, no results were found.
 			</div>
 		</div>
@@ -315,7 +315,7 @@
 			<table>
 				<thead>
 				</thead>
-				<tbody data-bind="foreach: views.search.api.results">
+				<tbody data-bind="foreach: views.topSearch.api.results">
 					<tr>
 						<td class="thumb"><a data-bind="attr: {href: link}"><img data-bind="attr: {src: media.m}" /></a></td>
 						<td data-bind="list_linkedTags: tags"></td>
@@ -324,7 +324,7 @@
 			</table>
 		</div>
 		
-		<div id="thumbs" data-bind="foreach: views.search.api.results">
+		<div id="thumbs" data-bind="foreach: views.topSearch.api.results">
 			<span class="thumb">
 				<a data-bind="attr: {href: link, title: title}"><img data-bind="attr: {src: media.m}" /></a>
 			</span>
