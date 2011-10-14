@@ -111,6 +111,10 @@ window.RoundHouse = (function () {
 					views[name] = View();
 					views[name].context = $(viewData);
 				}
+				else if (viewData instanceof jQuery) {
+					views[name] = View();
+					views[name].context = viewData;
+				}
 				else {
 					views[name] = viewData.view || View();
 					views[name].context = viewData.selector ? $(viewData.selector) : null;
@@ -165,7 +169,7 @@ window.RoundHouse = (function () {
 	}
 
 	function View(options, apiFn) {
-		var self, settings, api, visible, toggled;
+		var self, settings, api;
 		
 		function visibleIfParamEquals(param, value) {
 			self.app.watchParam(param, function (paramValue) {
@@ -192,12 +196,18 @@ window.RoundHouse = (function () {
 				
 				visible: ko.observable(),
 				toggled: ko.observable(),
+				firstVisible: ko.observable(),
 				
 				visibleIfParamEquals: visibleIfParamEquals
 			};
 			
 			self.visible.subscribe(function (isVisible) {
 				var isNowVisible;
+				
+				// provide an observable to flag when a view is first visible
+				if (isVisible) {
+					self.firstVisible(true);
+				}
 				
 				if (self.context) {
 					isNowVisible = self.context.is(":visible");

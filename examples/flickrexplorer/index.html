@@ -13,12 +13,13 @@
 			$(function () {
 				var app = RoundHouse.App({
 					views: {
-						searchView: {
+						search: {
 							selector: "#search",
 							view: RoundHouse.View(
 								function (app, view) {
 									var results = ko.observableArray(),
 										noResults = ko.observable(false),
+										searching = ko.observable(false)
 										$query = $(".query", view.context);
 										
 									function search() {
@@ -39,18 +40,6 @@
 										focus();
 									}
 									
-									function showThumbs() {
-										app.addParam("show", "thumbs");
-										focus();
-										return false;
-									}
-									
-									function showList() {
-										app.addParam("show", "list");
-										focus();
-										return false;
-									}
-									
 									function focus() {
 										$query.focus();
 									}
@@ -61,40 +50,45 @@
 										// set the input box as this function may be called on page load
 										$query.val(search);
 
+										results([]);
+										noResults(false);
+										
 										if (search.length > 0) {
+											searching(true);
 											$.getJSON("http://api.flickr.com/services/feeds/photos_public.gne?tags=" + search + "&tagmode=any&format=json&jsoncallback=?", function(data) {
+												searching(false);
 												results(data.items);
 												noResults(data.items.length == 0);
 											});
 										}
-										else {
-											results([]);
-											noResults(false);
-										}
 									})
+									
+									// refocus on the search field on the initial load and when the view type changes
+									app.watchParam("view", function () {
+										focus();
+									});
 								
 									return {
 										results: results,
 										noResults: noResults,
+										searching: searching,
 										search: search,
 										clear: clear,
-										showThumbs: showThumbs,
-										showList: showList,
 										focus: focus
 									}
 								}
 							)
 						},
 						
-						listView: {
+						list: {
 							selector: "#list",
 							view: RoundHouse.View( 	
 								function (app, view) {
-									app.watchParam("show", function (show) {
-										view.visible(!show || (show === "list"));
-									});
 								
-									ko.bindingHandlers.listViewLinkedTags = {
+									// this doesn't scope the binding handler to the view but it does organize the code
+									// to associate the handler to the view.  The link_ prefix is used as a convention
+									// to know where the handler is defined in the html
+									ko.bindingHandlers.list_linkedTags = {
 										update: function (element, valueAccessor, allBindingsAccessor, viewModel) {
 											var linkedTags = [],
 												$element = $(element);
@@ -106,22 +100,42 @@
 											$(element).html(linkedTags.join(" "));
 										}
 									}
+									
+									app.watchParam("view", function (viewValue) {
+										view.visible(!viewValue || (viewValue === "list"));
+									});
+								
+									function show() {
+										app.addParam("view", "list");
+									}
+									
+									return {
+										show: show
+									}
 								}
 							)
 						},
 						
-						thumbView: {
+						thumbs: {
 							selector: "#thumbs",
 							view: RoundHouse.View(
 								function (app, view) {
-									view.visibleIfParamEquals("show", "thumbs");
+									view.visibleIfParamEquals("view", "thumbs");
+									
+									function show() {
+										app.addParam("view", "thumbs");
+									}
+									
+									return {
+										show: show
+									}
 								}
 							)	
 						}
 					}
 				});
 				
-				app.views.searchView.api.focus();
+				app.views.search.api.focus();
 				
 				app.run();
 			});
@@ -158,7 +172,9 @@
 				background-color: #cbe2ff;
 			}
 			
-			div#search div.noResults {
+			div#search div.noResults,
+			div#search div.searching
+			{
 				margin: 10px 0;
 			}
 			
@@ -195,17 +211,21 @@
 		<h1><img src="flickr-yahoo-logo.png" /> Explorer</h1>
 		
 		<div id="search">
-			<form data-bind="submit: views.searchView.api.search">
+			<form data-bind="submit: views.search.api.search">
 				<input type="text" class="query" />
-				<input type="button" value="Search" data-bind="click: views.searchView.api.search" />
-				<input type="button" value="Clear" data-bind="click: views.searchView.api.clear" />
+				<input type="button" value="Search" data-bind="click: views.search.api.search" />
+				<input type="button" value="Clear" data-bind="click: views.search.api.clear" />
 			</form>
 			
-			<div class="showBar" data-bind="visible: views.searchView.api.results().length > 0">
-				<a href="#" data-bind="click: views.searchView.api.showList">List</a> | <a href="#" data-bind="click: views.searchView.api.showThumbs">Thumbs</a>
+			<div class="searching" data-bind="visible: views.search.api.searching">
+				Searching ...
 			</div>
 			
-			<div class="noResults" data-bind="visible: views.searchView.api.noResults">
+			<div class="showBar" data-bind="visible: views.search.api.results().length > 0">
+				<a href="#" data-bind="click: views.list.api.show">List</a> | <a href="#" data-bind="click: views.thumbs.api.show">Thumbs</a>
+			</div>
+			
+			<div class="noResults" data-bind="visible: views.search.api.noResults">
 				Sorry, no results were found.
 			</div>
 		</div>
@@ -214,16 +234,16 @@
 			<table>
 				<thead>
 				</thead>
-				<tbody data-bind="foreach: views.searchView.api.results">
+				<tbody data-bind="foreach: views.search.api.results">
 					<tr>
 						<td class="thumb"><a data-bind="attr: {href: link}"><img data-bind="attr: {src: media.m}" /></a></td>
-						<td data-bind="listViewLinkedTags: tags"></td>
+						<td data-bind="list_linkedTags: tags"></td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
 		
-		<div id="thumbs" data-bind="foreach: views.searchView.api.results">
+		<div id="thumbs" data-bind="foreach: views.search.api.results">
 			<span class="thumb">
 				<a data-bind="attr: {href: link, title: title}"><img data-bind="attr: {src: media.m}" /></a>
 			</span>
