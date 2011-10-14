@@ -77,6 +77,14 @@ window.RoundHouse = (function () {
 			});
 		}
 		
+		function hideAllExcept() {
+			var args = Array.prototype.slice.call(arguments);
+			
+			jQuery.each(self.views, function (name, view) {
+				view.visible(jQuery.inArray(name, args) !== -1);
+			});
+		}
+		
 		function run() {
 			var $window = $(window);
 			
@@ -96,6 +104,7 @@ window.RoundHouse = (function () {
 		
 			// set the default settings
 			settings = jQuery.extend({
+				selector: "",
 				views: [],
 				api: {}
 			}, options);
@@ -140,6 +149,8 @@ window.RoundHouse = (function () {
 				removeParams: removeParams,
 				buildParamString: buildParamString,
 				watchParam: watchParam,
+				hideAllExcept: hideAllExcept,
+				
 				started: ko.observable(false)
 			};
 			
@@ -152,8 +163,19 @@ window.RoundHouse = (function () {
 				view.api = view.apiFn ? view.apiFn(self, view) : view.api;
 			});			
 			
-			// bind the app to the entire DOM
-			ko.applyBindings(self);
+			if (settings.selector) {
+				// apply bindings to the supplied selector elements
+				$(settings.selector).each(function () {
+					ko.applyBindings(self, this);
+				});
+			}
+			else {
+				// bind the app to the entire DOM
+				ko.applyBindings(self);
+			}
+			
+			// set an app instance to itself for clearer templates
+			self.app = self;
 			
 			// return the interface
 			return self;
