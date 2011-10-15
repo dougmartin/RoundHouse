@@ -228,9 +228,9 @@ window.RoundHouse = (function () {
 					self.visible(newParams.hasOwnProperty(param));
 				});			
 			} else {
-				self.app.watchParam(param, function (paramValue) {
+				self.app.watchParam(param, function (paramValue, allParams) {
 					if (jQuery.isFunction(value)) {
-						self.visible(value(paramValue));
+						self.visible(value(paramValue, allParams));
 					} else {
 						self.visible(paramValue === value);
 					}
