@@ -66,13 +66,17 @@ window.RoundHouse = (function () {
 			}
 		}
 		
-		function watchParam(name, callback) {
+		function watchParam(name, callbackOrObservable) {
 			var lastValue = null;
 			
 			return params.subscribe(function (newParams) {
 				if (newParams[name] !== lastValue) {
 					lastValue = newParams[name];
-					callback(newParams[name], newParams);
+					if (ko.isObservable(callbackOrObservable)) {
+						callbackOrObservable(newParams[name]);
+					} else {
+						callbackOrObservable(newParams[name], newParams);
+					}
 				}
 			});
 		}
@@ -218,14 +222,20 @@ window.RoundHouse = (function () {
 		var self, settings, api;
 		
 		function visibleIfParam(param, value) {
-			self.app.watchParam(param, function (paramValue) {
-				if (jQuery.isFunction(value)) {
-					self.visible(value(paramValue));
-				}
-				else {
-					self.visible(paramValue === value);
-				}
-			});
+			if (typeof value === "undefined") {
+				// the value doesn't matter, just that the param exists
+				self.app.params.subscribe(function (newParams) {
+					self.visible(newParams.hasOwnProperty(param));
+				});			
+			} else {
+				self.app.watchParam(param, function (paramValue) {
+					if (jQuery.isFunction(value)) {
+						self.visible(value(paramValue));
+					} else {
+						self.visible(paramValue === value);
+					}
+				});
+			}
 		}
 		
 		function init(options) {
