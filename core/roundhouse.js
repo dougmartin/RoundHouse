@@ -90,6 +90,43 @@ window.RoundHouse = (function () {
 			});
 		}
 		
+		function addViews(viewsToAdd, skipApiInit) {
+			var newViews = {};
+			
+			jQuery.each(viewsToAdd, function (name, viewData) {
+				if (typeof viewData === "string") {
+					views[name] = View();
+					views[name].context = $(viewData);
+				}
+				else if (viewData instanceof jQuery) {
+					views[name] = View();
+					views[name].context = viewData;
+				}
+				else {
+					views[name] = viewData.view || View();
+					views[name].context = viewData.selector ? $(viewData.selector) : null;
+				}
+				
+				views[name].visible(views[name].context ? views[name].context.is(":visible") : null);
+				
+				// set each view to have a reference to all the views
+				views[name].views = views;
+				
+				newViews[name] = views[name];
+			});
+			
+			if (skipApiInit) {
+				return;
+			}
+			
+			jQuery.each(newViews, function (name, view) {
+				view.app = self;
+				view.api = view.apiFn ? view.apiFn(self, view) : view.api;
+			});			
+			
+			newViews = null;
+		}
+		
 		function run() {
 			var $window = $(window);
 			
@@ -118,29 +155,9 @@ window.RoundHouse = (function () {
 				nameValue: "="
 			}, settings.paramSeparators);
 			
-			// create the views shortcut
+			// create the views shortcut, skipping the api
 			views = {};
-			jQuery.each(settings.views, function (name, viewData) {
-				if (typeof viewData === "string") {
-					views[name] = View();
-					views[name].context = $(viewData);
-				}
-				else if (viewData instanceof jQuery) {
-					views[name] = View();
-					views[name].context = viewData;
-				}
-				else {
-					views[name] = viewData.view || View();
-					views[name].context = viewData.selector ? $(viewData.selector) : null;
-				}
-				
-				views[name].visible(views[name].context ? views[name].context.is(":visible") : null);
-			});
-			
-			// set each view to have a reference to all the views
-			jQuery.each(views, function (name, view) {
-				view.views = views;
-			});
+			addViews(settings.views, true);
 			
 			// create the initial interface
 			self = {
@@ -156,6 +173,7 @@ window.RoundHouse = (function () {
 				watchParam: watchParam,
 				getParam: getParam,
 				hideAllExcept: hideAllExcept,
+				addViews: addViews,
 				
 				started: ko.observable(false)
 			};
