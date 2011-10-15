@@ -90,13 +90,13 @@ window.RoundHouse = (function () {
 			});
 		}
 		
-		function addViews(viewsToAdd, skipApiInit) {
+		function addViews(viewsToAdd, context, skipApiInit) {
 			var newViews = {};
 			
 			jQuery.each(viewsToAdd, function (name, viewData) {
 				if (typeof viewData === "string") {
 					views[name] = View();
-					views[name].context = $(viewData);
+					views[name].context = $(viewData, context);
 				}
 				else if (viewData instanceof jQuery) {
 					views[name] = View();
@@ -104,7 +104,7 @@ window.RoundHouse = (function () {
 				}
 				else {
 					views[name] = viewData.view || View();
-					views[name].context = viewData.selector ? $(viewData.selector) : null;
+					views[name].context = viewData.selector ? $(viewData.selector, context) : null;
 				}
 				
 				views[name].visible(views[name].context ? views[name].context.is(":visible") : null);
@@ -157,7 +157,7 @@ window.RoundHouse = (function () {
 			
 			// create the views shortcut, skipping the api
 			views = {};
-			addViews(settings.views, true);
+			addViews(settings.views, null, true);
 			
 			// create the initial interface
 			self = {
