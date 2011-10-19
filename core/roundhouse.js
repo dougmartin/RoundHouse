@@ -86,6 +86,15 @@ window.RoundHouse = (function () {
 			return parsedParams[name] || defaultValue;
  		}
 		
+		function toggleParam(name, value) {
+			if (getParam(name) === value) {
+				removeParam(name);
+			}
+			else {
+				addParam(name, value);
+			}		
+		}
+		
 		function hideAllExcept() {
 			var args = Array.prototype.slice.call(arguments);
 			
@@ -176,6 +185,7 @@ window.RoundHouse = (function () {
 				buildParamString: buildParamString,
 				watchParam: watchParam,
 				getParam: getParam,
+				toggleParam: toggleParam,
 				hideAllExcept: hideAllExcept,
 				addViews: addViews,
 				
