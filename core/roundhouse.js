@@ -109,6 +109,14 @@ window.RoundHouse = (function () {
 			});
 		}
 		
+		function initViews(newViews) {
+			jQuery.each(newViews, function (name, view) {
+				view.app = self;
+				view.api = view.apiFn ? view.apiFn(self, view) : view.api;
+				view.created(true);
+			});			
+		}
+		
 		function addViews(viewsToAdd, context, skipApiInit) {
 			var newViews = {};
 			
@@ -138,12 +146,7 @@ window.RoundHouse = (function () {
 				return;
 			}
 			
-			jQuery.each(newViews, function (name, view) {
-				view.app = self;
-				view.api = view.apiFn ? view.apiFn(self, view) : view.api;
-			});			
-			
-			newViews = null;
+			initViews(newViews);
 		}
 		
 		function run() {
@@ -206,11 +209,7 @@ window.RoundHouse = (function () {
 			self.api = apiFn ? apiFn(self) : settings.api;
 			
 			// run the api init function across all the views
-			jQuery.each(views, function (name, view) {
-				view.app = self;
-				view.api = view.apiFn ? view.apiFn(self, view) : view.api;
-				view.created(true);
-			});
+			initViews(views);
 
 			self.created(true);
 			
