@@ -28,10 +28,16 @@ window.RoundHouse = (function () {
 		}
 		
 		function buildParamString(newParams) {
-			var newHash = [];
+			var sortedNames = [],
+				newHash = [];
 				
 			jQuery.each(newParams, function (name, value) {
-				newHash.push(name + settings.paramSeparators.nameValue + value);
+				sortedNames.push(name);
+			});
+			sortedNames.sort();
+			
+			jQuery.each(sortedNames, function (i, name) {
+				newHash.push(name + settings.paramSeparators.nameValue + newParams[name]);
 			});
 			
 			return newHash.join(settings.paramSeparators.pairs);
