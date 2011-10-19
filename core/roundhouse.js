@@ -179,6 +179,7 @@ window.RoundHouse = (function () {
 				hideAllExcept: hideAllExcept,
 				addViews: addViews,
 				
+				created: ko.observable(false),
 				started: ko.observable(false)
 			};
 			
@@ -192,7 +193,10 @@ window.RoundHouse = (function () {
 			jQuery.each(views, function (name, view) {
 				view.app = self;
 				view.api = view.apiFn ? view.apiFn(self, view) : view.api;
-			});			
+				view.created(true);
+			});
+
+			self.created(true);
 			
 			if (settings.selector) {
 				// apply bindings to the supplied selector elements
@@ -219,7 +223,7 @@ window.RoundHouse = (function () {
 	}
 
 	function View(options, apiFn) {
-		var self, settings, api;
+		var self, settings, api, created;
 		
 		function visibleIfParam(param, value) {
 			if (typeof value === "undefined") {
@@ -255,6 +259,7 @@ window.RoundHouse = (function () {
 				api: settings.api,
 				app: null,
 				
+				created: ko.observable(false),
 				visible: ko.observable(),
 				toggled: ko.observable(),
 				firstVisible: ko.observable(),
