@@ -92,6 +92,11 @@ window.RoundHouse = (function () {
 			return parsedParams[name] || defaultValue;
  		}
 		
+		function hasParam(name) {
+			var parsedParams = parseParams();
+			return parsedParams.hasOwnProperty(name);
+ 		}		
+		
 		function toggleParam(name, value) {
 			if (getParam(name) === value) {
 				removeParam(name);
@@ -194,6 +199,7 @@ window.RoundHouse = (function () {
 				buildParamString: buildParamString,
 				watchParam: watchParam,
 				getParam: getParam,
+				hasParam: hasParam,
 				toggleParam: toggleParam,
 				hideAllExcept: hideAllExcept,
 				addViews: addViews,
