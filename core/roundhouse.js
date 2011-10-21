@@ -263,6 +263,12 @@ window.RoundHouse = (function () {
 			}
 		}
 		
+		function visibleIfNoParam(param) {
+			self.app.params.subscribe(function (newParams) {
+				self.visible(!newParams.hasOwnProperty(param));
+			});			
+		}
+		
 		function init(options) {
 		
 			// set the default settings
@@ -285,7 +291,8 @@ window.RoundHouse = (function () {
 				toggled: ko.observable(),
 				firstVisible: ko.observable(),
 				
-				visibleIfParam: visibleIfParam
+				visibleIfParam: visibleIfParam,
+				visibleIfNoParam: visibleIfNoParam
 			};
 			
 			self.visible.subscribe(function (isVisible) {
