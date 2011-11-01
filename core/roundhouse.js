@@ -59,8 +59,10 @@ window.RoundHouse = (function () {
 			setParams(parsedParams);		
 		}
 		
-		function removeParams(names) {
-			if (!names) {
+		function removeParams() {
+			var names = Array.prototype.slice.call(arguments);
+			
+			if (names.length === 0) {
 				setParams({});
 			}
 			else {
@@ -72,10 +74,12 @@ window.RoundHouse = (function () {
 			}
 		}
 		
-		function keepParams(names) {
-			var parsedParams = parseParams(),
+		function keepParams() {
+			var names = Array.prototype.slice.call(arguments),
+				parsedParams = parseParams(),
 				newParams = {};
-			jQuery.each(names || [], function (i, name) {
+				
+			jQuery.each(names, function (i, name) {
 				if (parsedParams.hasOwnProperty(name)) {
 					newParams[name] = parsedParams[name];
 				}
