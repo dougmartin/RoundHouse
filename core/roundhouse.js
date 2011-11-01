@@ -207,6 +207,7 @@ window.RoundHouse = (function () {
 				addParam: addParam,
 				removeParam: removeParam,
 				removeParams: removeParams,
+				keepParams: keepParams,
 				buildParamString: buildParamString,
 				watchParam: watchParam,
 				getParam: getParam,
