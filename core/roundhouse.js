@@ -72,6 +72,17 @@ window.RoundHouse = (function () {
 			}
 		}
 		
+		function keepParams(names) {
+			var parsedParams = parseParams(),
+				newParams = {};
+			jQuery.each(names || [], function (i, name) {
+				if (parsedParams.hasOwnProperty(name)) {
+					newParams[name] = parsedParams[name];
+				}
+			});
+			setParams(newParams);		
+		}		
+		
 		function watchParam(name, callbackOrObservable) {
 			var lastValue = null;
 			
